@@ -19,19 +19,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d("Debug", "create");
 
+        Log.d("Debug", "create");
+
         Intent rec = getIntent();
         int value = rec.getIntExtra("id",0);
-        u = new User();
-        u.name = "MAD";
-        u.description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua";
-        u.id = 1;
-        u.followed = false;
+        u = ListActivity.userList.get(value);
+//        u.name = "MAD";
+//        u.description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua";
+//        u.id = 1;
+//        u.followed = false;
 
-        TextView name = findViewById(R.id.topname);
-        Button messagebtn = findViewById(R.id.messagebtn);
-        name.setText(u.name + " " + value);
-        TextView description = findViewById(R.id.description);
-        messagebtn.setText("Message");
+        TextView name = findViewById(R.id.txtName);
+        name.setText(u.name);
+        TextView description = findViewById(R.id.txtDescription);
         description.setText(u.description);
         setFollowBtn();
     }
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         else
             Toast.makeText(this,"Unfollowed", Toast.LENGTH_SHORT).show();
         setFollowBtn();
+        DBHandler db = new DBHandler(this);
+        db.updateUser(u);
     }
 
     @Override

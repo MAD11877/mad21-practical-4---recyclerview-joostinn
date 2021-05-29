@@ -26,6 +26,10 @@ public class User {
         return followed;
     }
 
+    public void setFollowed(boolean followed) {
+        this.followed = followed;
+    }
+
     public int getId() {
         return id;
     }

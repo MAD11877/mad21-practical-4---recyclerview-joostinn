@@ -17,58 +17,64 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>{
-    Context context;
     ArrayList<User> data;
 
-    public UsersAdapter(Context c, ArrayList<User> d)
-    {
-        context = c;
-        data = d;
+    public UsersAdapter(ArrayList<User> input){
+        data = input;
     }
 
+    @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View item = null;
-        if(viewType == 0) //multiplies of three
-        {
-            item = LayoutInflater.from(parent.getContext()).inflate(R.layout.username7, parent, false);
-        }
-        else
-            item = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_user_view_holder, parent, false);
 
+        if(viewType == 7) {
+            item = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.username7,
+                    parent,
+                    false
+            );
+        } else {
+            item = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.activity_user_view_holder,
+                    parent,
+                    false
+            );
+        }
         return new UserViewHolder(item);
     }
 
     @Override
-    public void onBindViewHolder(UserViewHolder holder, int position) {
-        Log.d("RV","onBindViewHolder #" + position);
+    public int getItemViewType(int position) {
+        return Integer.parseInt(data.get(position).name.substring(data.get(position).name.length()-1));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User u = data.get(position);
-        holder.name.setText(u.getName());
-        holder.description.setText(u.getDescription());
-        holder.view.setOnClickListener(new View.OnClickListener() {
+        holder.name.setText(u.name);
+        holder.description.setText(u.description);
+
+
+        holder.img.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                Log.d("Debug", "Image clicked");
 
-                builder.setTitle("Profile");
-                builder.setMessage(u.getName());
-                builder.setPositiveButton("View", new DialogInterface.OnClickListener(){
+                new AlertDialog.Builder(holder.img.getContext())
+                        .setTitle("Profile")
+                        .setMessage(u.name)
+                        .setPositiveButton("View", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent viewProfile = new Intent(holder.img.getContext(), MainActivity.class);
+                                viewProfile.putExtra("id", position);
+                                holder.img.getContext().startActivity(viewProfile);
+                            }
+                        })
+                        .setNegativeButton("Close", null)
+                        .show();
 
-                    public void onClick(DialogInterface dialog, int id){
-                        Intent in = new Intent(context, MainActivity.class);
-                        in.putExtra("userName", u.getName());
-                        in.putExtra("userDescription", u.getDescription());
-                        in.putExtra("userId", u.getId());
-                        in.putExtra("userFollowed", u.isFollowed());
-                        context.startActivity(in);
-                    }
-                });
-                builder.setNegativeButton("Close", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
             }
         });
     }
@@ -77,14 +83,4 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>{
     public int getItemCount() {
         return data.size();
     }
-
-    @Override
-    public int getItemViewType(int position) {
-        String s = data.get(position).getName();
-
-        if(s.substring(s.length() - 1).equals("7"))
-            return 0;
-        return 1;
-    }
-
 }

@@ -16,26 +16,33 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ListActivity extends AppCompatActivity {
+    static ArrayList<User> userList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        ArrayList<User> data = new ArrayList<User>();
-        for(int i=0; i<20; i++)
-        {
+
+        DBHandler db = new DBHandler(this);
+        userList = db.getUser();
+
+        userList = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
             User u = new User();
-            u.setName("Name" + new Random().nextInt(1000000000));
-            u.setDescription("Description " + new Random().nextInt(1000000000));
-            u.setId(i);
-            data.add(u);
+            u.name = "Name" + new Random().nextInt();
+            u.description = "Description " + new Random().nextInt();
+            u.followed = new Random().nextInt() % 2 == 0;
+            userList.add(u);
         }
 
         RecyclerView rv = findViewById(R.id.rv);
-        UsersAdapter adapter = new UsersAdapter(this, data);
-        LinearLayoutManager lm = new LinearLayoutManager(this);
-        rv.setLayoutManager(lm);
-        rv.setAdapter(adapter);
+        UsersAdapter itemsAdapter = new UsersAdapter(userList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(linearLayoutManager);
+        rv.setAdapter(itemsAdapter);
+    }
+}
 
         /*ImageView img = findViewById(R.id.profilebtn);
         img.setOnClickListener(new View.OnClickListener(){
@@ -59,7 +66,6 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });*/
-    }
 
 
-}
+
